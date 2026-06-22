@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Товары | Админ-панель</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<style>
+:root { --bg-light: #f8fafc; --bg-dark: #09090b; --card-light: #ffffff; --card-dark: #18181b; --text-light: #0f172a; --text-dark: #f8fafc; --accent-1: #8b5cf6; --accent-2: #d946ef; --sidebar-w: 260px; }
+body { background: var(--bg-light); font-family: 'Montserrat', sans-serif; color: var(--text-light); margin: 0; display: flex; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+.sidebar { width: var(--sidebar-w); background: var(--card-light); border-right: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; padding: 30px 20px; z-index: 100; transition: 0.3s;}
+.brand { display: flex; flex-direction: column; align-items: center; font-weight: 900; font-size: 24px; color: var(--accent-1); text-decoration: none; margin-bottom: 40px; }
+.brand span { font-size: 11px; letter-spacing: 3px; color: var(--accent-2); text-transform: uppercase; margin-top: -2px; }
+.nav-menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.nav-link { display: flex; align-items: center; gap: 15px; padding: 14px 20px; border-radius: 14px; color: #64748b; font-weight: 700; text-decoration: none; transition: 0.3s; }
+.nav-link:hover { background: rgba(139, 92, 246, 0.05); color: var(--accent-1); }
+.nav-link.active { background: rgba(139, 92, 246, 0.1); color: var(--accent-1); border-left: 4px solid var(--accent-1); }
+.logout-btn { margin-top: auto; color: #a1a1aa; background: rgba(0,0,0,0.02); }
+.logout-btn:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+.main-wrapper { flex: 1; overflow-y: auto; padding: 30px 40px; }
+.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+.bento-card { background: var(--card-light); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.03); transition: 0.3s; }
+.btn-theme { background: white; color: #0f172a; border: 1px solid #e2e8f0; width: 44px; height: 44px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.btn-theme:hover { transform: scale(1.05); }
+
+.table th { font-weight: 700; color: #64748b; border-bottom: none; }
+.table td { vertical-align: middle; font-weight: 600; border-color: rgba(0,0,0,0.05); padding: 15px 10px; }
+.inline-edit-input { width: 100%; min-width: 250px; border: 1px solid transparent; background: transparent; color: inherit; font-weight: 800; font-family: inherit; font-size: 15px; padding: 8px 12px; border-radius: 8px; transition: 0.3s;}
+.inline-edit-input:focus { background: var(--card-light); border-color: var(--accent-1); outline: none; box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
+
+/* 🔥 ИСПРАВЛЕНИЕ ТЕМНОЙ ТЕМЫ 🔥 */
+body.dark-mode { background: var(--bg-dark); color: var(--text-dark); }
+body.dark-mode ::-webkit-scrollbar-thumb { background: #3f3f46; }
+body.dark-mode .sidebar { background: var(--card-dark); border-color: rgba(255,255,255,0.02); }
+body.dark-mode .bento-card { background: var(--card-dark); border-color: rgba(255,255,255,0.03); box-shadow: none; }
+body.dark-mode .nav-link:not(.active) { color: #a1a1aa; }
+body.dark-mode .nav-link:not(.active):hover { background: rgba(255,255,255,0.05); color: white; }
+body.dark-mode .logout-btn { background: rgba(255,255,255,0.03); }
+body.dark-mode .btn-theme { background: #27272a; color: #fbbf24; border-color: #3f3f46; }
+
+body.dark-mode .table { color: white !important; }
+body.dark-mode .table td { border-color: rgba(255,255,255,0.05); background: transparent; color: white !important; }
+body.dark-mode .table th { background: transparent; color: #a1a1aa;}
+body.dark-mode .text-muted { color: #94a3b8 !important; } 
+body.dark-mode .text-secondary { color: #cbd5e1 !important; }
+body.dark-mode .inline-edit-input:focus { background: var(--card-dark); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <a href="#" class="brand">PC STORE<span>ADMIN</span></a>
+    <ul class="nav-menu">
+        <li><a href="{% url 'admin_dashboard' %}" class="nav-link"><i class="bi bi-grid-fill"></i> Дашборд</a></li>
+        <li><a href="{% url 'admin_orders' %}" class="nav-link"><i class="bi bi-box-seam-fill"></i> Заказы</a></li>
+        <li><a href="{% url 'admin_products' %}" class="nav-link active"><i class="bi bi-gpu-card"></i> Товары</a></li>
+        <li><a href="{% url 'admin_users' %}" class="nav-link"><i class="bi bi-people-fill"></i> Пользователи</a></li>
+        <li><a href="{% url 'admin_settings' %}" class="nav-link"><i class="bi bi-gear-fill"></i> Настройки</a></li>
+    </ul>
+    <a href="{% url 'home' %}" class="nav-link logout-btn"><i class="bi bi-arrow-left-circle-fill"></i> В магазин</a>
+</aside>
+
+<main class="main-wrapper">
+    <div class="top-bar">
+        <h1 class="page-title"><i class="bi bi-box text-success me-2"></i> Каталог товаров</h1>
+        <button id="theme-toggle" class="btn-theme">🌙</button>
+    </div>
+
+    <div class="bento-card p-0 overflow-hidden">
+        <div class="d-flex align-items-center p-3 border-bottom" style="border-color: rgba(0,0,0,0.05);">
+            <div class="text-secondary fw-bold small"><i class="bi bi-info-circle"></i> Кликните на название товара, чтобы изменить его</div>
+        </div>
+        <div class="table-responsive p-3 pt-0">
+            <table class="table align-middle text-center mb-0">
+                <thead class="table-light"><tr><th>Фото</th><th class="text-start">Название</th><th>Категория</th><th>Цена</th></tr></thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            {% if product.image %}<img src="{{ product.image }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 12px; background: #f1f5f9;">
+                            {% else %}<div class="bg-dark text-white rounded-3 d-inline-flex justify-content-center align-items-center" style="width:50px;height:50px;">🖥️</div>{% endif %}
+                        </td>
+                        <td class="text-start">
+                            <input type="text" class="inline-edit-input" value="{{ product.name }}" onchange="updateName({{ product.id }}, this.value)">
+                        </td>
+                        <td><span class="badge bg-secondary bg-opacity-25 text-secondary px-3 py-2 rounded-pill">{{ product.category.name }}</span></td>
+                        <td class="fw-black text-primary fs-5">{{ product.price|floatformat:0 }} ₽</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="py-5 text-muted fw-bold">Товары отсутствуют</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-4"><div id="liveToast" class="toast align-items-center text-white border-0 bg-success"><div class="d-flex"><div class="toast-body fw-bold" id="toastMessage"></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const themeToggleBtn = document.getElementById('theme-toggle');
+const setIcon = () => themeToggleBtn.innerHTML = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+if (localStorage.getItem('pcstore_theme') === 'dark') document.body.classList.add('dark-mode');
+setIcon();
+themeToggleBtn.addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('pcstore_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    setIcon();
+});
+
+function getCookie(n) { let v=null; if(document.cookie){ document.cookie.split(';').forEach(c=>{ if(c.trim().startsWith(n+'=')) v=decodeURIComponent(c.trim().substring(n.length+1)); }); } return v; }
+
+function updateName(productId, newName) {
+    if(!newName.trim()) return alert("Название не может быть пустым!");
+    fetch('/api/admin/product-name/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify({ product_id: productId, name: newName })
+    })
+    .then(r => r.json()).then(data => {
+        if(data.ok) {
+            const t = document.getElementById('liveToast');
+            document.getElementById('toastMessage').innerText = `Название товара успешно обновлено!`;
+            new bootstrap.Toast(t, {delay: 3000}).show();
+        } else alert('Ошибка при обновлении: ' + data.error);
+    });
+}
+</script>
+</body>
+</html>

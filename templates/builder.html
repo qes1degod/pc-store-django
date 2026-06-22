@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сборка ПК мечты | PC STORE</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<style>
+/* ================= БАЗА И ПЕРЕМЕННЫЕ ================= */
+:root { --bg-light: #f8fafc; --bg-dark: #09090b; --card-light: #ffffff; --card-dark: #18181b; --text-light: #0f172a; --text-dark: #f8fafc; --accent-1: #6366f1; --accent-2: #a855f7; }
+body { background: var(--bg-light); font-family: 'Montserrat', sans-serif; color: var(--text-light); transition: background 0.3s, color 0.3s; padding-bottom: 220px; overflow-x: hidden;}
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+body.dark-mode ::-webkit-scrollbar-thumb { background: #3f3f46; }
+
+/* ШАПКА */
+.navbar { background: rgba(255, 255, 255, 0.65) !important; backdrop-filter: blur(25px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 15px 0; }
+.logo { font-size: 26px; font-weight: 900; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+.btn-theme { background: white; color: #0f172a; border: 1px solid #e2e8f0; width: 44px; height: 44px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.btn-theme:hover { transform: scale(1.05); }
+
+/* СЛОТЫ КОНФИГУРАТОРА */
+.builder-slot { background: var(--card-light); border-radius: 24px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,.02); border: 2px dashed #cbd5e1; display: flex; align-items: center; justify-content: space-between; transition: .4s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; }
+.builder-slot:hover { border-color: var(--accent-1); transform: translateY(-5px); box-shadow: 0 20px 40px rgba(99,102,241,.15); }
+.builder-slot.filled { border-style: solid; border-color: var(--accent-1); background: rgba(99,102,241,0.03); }
+.slot-icon { width: 70px; height: 70px; background: rgba(0,0,0,0.03); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-right: 25px; color: var(--text-light);}
+.builder-slot.filled .slot-icon { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); color: white; box-shadow: 0 10px 20px rgba(99,102,241,0.3);}
+.slot-info { flex: 1; }
+.slot-title { font-weight: 900; font-size: 20px; color: var(--text-light); margin-bottom: 5px; }
+.slot-desc { color: #64748b; font-size: 15px; font-weight: 600;}
+.slot-price { font-size: 24px; font-weight: 900; color: var(--accent-1); }
+
+/* FPS ПАНЕЛЬ */
+.fps-panel { background: var(--card-light); border-radius: 32px; padding: 35px; box-shadow: 0 15px 40px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); }
+.fps-item { display: flex; align-items: center; gap: 15px; padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid transparent;}
+.fps-counter { font-size: 36px; font-weight: 900; line-height: 1; transition: 0.3s; }
+
+/* БИРЖА СБОРОК СООБЩЕСТВА */
+.community-build-card { background: var(--card-light); border-radius: 24px; padding: 25px; border: 1px solid rgba(0,0,0,0.05); transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+.community-build-card:hover { border-color: var(--accent-1); transform: translateY(-3px); }
+
+/* ПЛАВАЮЩИЙ ПОДВАЛ И КНОПКИ */
+.summary-bar { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(30px); border-radius: 32px; padding: 25px 40px; box-shadow: 0 -10px 40px rgba(0,0,0,.1); position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 1000px; z-index: 100; border: 1px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: space-between; transition: 0.4s;}
+.power-indicator { background: rgba(245, 158, 11, 0.1); padding: 15px 25px; border-radius: 20px; font-weight: 800; color: #d97706; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(245, 158, 11, 0.2); transition: 0.3s;}
+.power-danger { background: rgba(239, 68, 68, 0.1) !important; color: #ef4444 !important; border-color: rgba(239, 68, 68, 0.4) !important; animation: blinkWarning 1s infinite; }
+@keyframes blinkWarning { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+.btn-mega { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); color: white !important; font-weight: 800; border-radius: 100px; padding: 18px 40px; font-size: 18px; border: none; transition: 0.3s; display: flex; align-items: center; gap: 10px;}
+.btn-mega:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(168, 85, 247, 0.4); }
+
+.modal-content { border-radius: 32px; border: none; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.3);}
+.prod-item { display: flex; align-items: center; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); transition: .3s; cursor: pointer; }
+
+/* 🔥 ТЕМНАЯ ТЕМА 🔥 */
+body.dark-mode { background: var(--bg-dark); color: var(--text-dark); }
+body.dark-mode .navbar { background: rgba(9, 9, 11, 0.75) !important; border-color: rgba(255,255,255,0.05); }
+body.dark-mode .btn-theme { background: #27272a; color: #fbbf24; border-color: #3f3f46; }
+body.dark-mode .builder-slot, body.dark-mode .community-build-card { background: var(--card-dark); border-color: #3f3f46; }
+body.dark-mode .builder-slot.filled { background: rgba(99,102,241,0.1); border-color: var(--accent-1); }
+body.dark-mode .slot-title, body.dark-mode .slot-icon { color: white; }
+body.dark-mode .slot-icon { background: rgba(255,255,255,0.05); }
+body.dark-mode .fps-panel { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
+body.dark-mode .summary-bar { background: rgba(24, 24, 27, 0.85); border-color: rgba(255,255,255,0.05); }
+body.dark-mode .modal-content { background: var(--card-dark); color: white; border: 1px solid rgba(255,255,255,0.1);}
+body.dark-mode .prod-item { border-color: rgba(255,255,255,0.05); }
+body.dark-mode .prod-item:hover { background: rgba(255,255,255,0.03); }
+body.dark-mode .text-secondary { color: #cbd5e1 !important; }
+body.dark-mode .text-muted { color: #94a3b8 !important; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container d-flex align-items-center justify-content-between">
+        <a href="{% url 'home' %}" class="logo">PC STORE</a>
+        <div class="d-flex gap-3 align-items-center">
+            <!-- КНОПКА ТЕМЫ -->
+            <button id="theme-toggle" class="btn-theme">🌙</button>
+            <a href="{% url 'home' %}" class="btn btn-dark rounded-pill fw-bold px-4 py-2">В каталог</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-black mb-3" style="font-size: 50px; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Умный Конфигуратор</h1>
+        <p class="text-secondary fs-5 fw-medium">Соберите ПК мечты или загрузите легендарные шаблоны сообщества.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- КОНФИГУРАТОР СЛОТОВ -->
+        <div class="col-lg-7">
+            <div id="builder-slots">
+                {% for cat in categories %}
+                <div class="builder-slot" onclick="openModal('{{ cat.name }}')">
+                    <div class="d-flex align-items-center" style="flex:1;">
+                        <div class="slot-icon">{% if 'Видео' in cat.name %}<i class="bi bi-gpu-card"></i>{% elif 'Процессор' in cat.name %}<i class="bi bi-cpu"></i>{% elif 'ОЗУ' in cat.name %}<i class="bi bi-memory"></i>{% elif 'SSD' in cat.name %}<i class="bi bi-device-ssd"></i>{% elif 'Блок' in cat.name %}<i class="bi bi-lightning-charge"></i>{% else %}<i class="bi bi-pc-display"></i>{% endif %}</div>
+                        <div class="slot-info">
+                            <div class="slot-title">{{ cat.name }}</div>
+                            <div class="slot-desc" id="desc-{{ cat.name }}">Нажмите, чтобы выбрать</div>
+                        </div>
+                    </div>
+                    <div class="slot-price" id="price-{{ cat.name }}">+</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ЖИВОЙ ПРЕДИКТОР FPS -->
+        <div class="col-lg-5">
+            <div class="fps-panel position-sticky" style="top: 100px;">
+                <h3 class="fw-black mb-4"><i class="bi bi-controller text-primary me-2"></i> Игровая мощность</h3>
+                
+                <div class="fps-item" style="background: rgba(234, 179, 8, 0.1); border-color: rgba(234, 179, 8, 0.2);">
+                    <div class="fs-1 text-warning"><i class="bi bi-crosshair"></i></div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold fs-5">Cyberpunk 2077</div>
+                        <div class="text-secondary small fw-bold">4K Ультра (Трассировка лучей)</div>
+                    </div>
+                    <div class="fps-counter text-warning" id="fps-cyber">0</div><span class="fw-bold text-warning opacity-75">FPS</span>
+                </div>
+
+                <div class="fps-item" style="background: rgba(249, 115, 22, 0.1); border-color: rgba(249, 115, 22, 0.2);">
+                    <div class="fs-1 text-danger"><i class="bi bi-crosshair2"></i></div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold fs-5">CS 2</div>
+                        <div class="text-secondary small fw-bold">1080p, Киберспорт</div>
+                    </div>
+                    <div class="fps-counter text-danger" id="fps-cs2">0</div><span class="fw-bold text-danger opacity-75">FPS</span>
+                </div>
+
+                <div class="fps-item" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.2);">
+                    <div class="fs-1 text-success"><i class="bi bi-car-front-fill"></i></div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold fs-5">GTA V</div>
+                        <div class="text-secondary small fw-bold">2K Ультра настройки</div>
+                    </div>
+                    <div class="fps-counter text-success" id="fps-gta">0</div><span class="fw-bold text-success opacity-75">FPS</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- БИРЖА СБОРОК СООБЩЕСТВА -->
+    <div class="d-flex justify-content-between align-items-center mt-5 mb-4">
+        <h2 class="fw-black m-0" style="font-size:32px; letter-spacing:-1px;">🔥 Легендарные сборки сообщества</h2>
+        <button class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold" onclick="alert('Сборка успешно отправлена на модерацию! После проверки вам начислится 500 🪙')">Поделиться своей (+500 🪙)</button>
+    </div>
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-xl-4">
+            <div class="community-build-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="fw-bold m-0 text-truncate" style="max-width:70%;">Убийца Киберпанка</h5>
+                    <span class="badge bg-danger rounded-pill px-3 py-2 fw-bold">Overpowered</span>
+                </div>
+                <p class="text-secondary small fw-medium mb-3">Связка RTX 5090 + Core i9. Бескомпромиссная мощь для 4K.</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="fw-black text-primary fs-5">425 000 ₽</div>
+                    <button class="btn btn-sm btn-dark rounded-pill px-3 fw-bold" onclick="loadPresetBuild('RTX 5090', 'Intel Core i9-14900K', '64GB DDR5', 425000, 950)">Загрузить</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+            <div class="community-build-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="fw-bold m-0 text-truncate" style="max-width:70%;">Народный Любимчик</h5>
+                    <span class="badge bg-success rounded-pill px-3 py-2 fw-bold">Best Price</span>
+                </div>
+                <p class="text-secondary small fw-medium mb-3">Связка RTX 4070 Ti + Ryzen 7. Идеальный сетап для 2K.</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="fw-black text-primary fs-5">165 000 ₽</div>
+                    <button class="btn btn-sm btn-dark rounded-pill px-3 fw-bold" onclick="loadPresetBuild('RTX 4070 Ti', 'AMD Ryzen 7 7800X3D', '32GB DDR5', 165000, 750)">Загрузить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ИТОГОВАЯ ПАНЕЛЬ -->
+<div class="summary-bar" id="summaryBar">
+    <div class="power-indicator" id="powerIndicator">
+        <i class="bi bi-lightning-fill fs-3"></i>
+        <div>
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px;" id="powerLabel">Расход энергии</div>
+            <div id="total-power" class="fs-4 fw-black">0 Вт</div>
+        </div>
+    </div>
+    <div class="text-center d-none d-md-block">
+        <div class="text-secondary fw-bold text-uppercase mb-1" style="font-size: 12px; letter-spacing: 1px;">Итоговая стоимость</div>
+        <div id="total-price" style="font-size: 40px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0 ₽</div>
+    </div>
+    <button class="btn-mega" onclick="addBuildToCart()">В КОРЗИНУ <i class="bi bi-rocket-takeoff-fill"></i></button>
+</div>
+
+<!-- СКРЫТЫЕ ТОВАРЫ И МОДАЛКА -->
+<div id="all-products" style="display: none;">
+    {% for p in products %}
+    <div class="prod-item" data-id="{{ p.id }}" data-cat="{{ p.category.name }}" data-price="{{ p.price|floatformat:0 }}" data-name="{{ p.name }}">
+        {% if p.image %}<img src="{{ p.image }}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 16px; margin-right: 20px; background: #f1f5f9;">{% else %}<div style="width:70px; height:70px; background:rgba(0,0,0,0.05); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:24px; margin-right:20px;">🖥️</div>{% endif %}
+        <div style="flex:1;">
+            <div class="fw-bold fs-5 mb-1">{{ p.name }}</div>
+            <div class="text-secondary fw-semibold small">{{ p.brand }}</div>
+        </div>
+        <div class="fw-black fs-4 text-primary me-4">{{ p.price|floatformat:0 }} ₽</div>
+        <button class="btn btn-dark fw-bold rounded-pill px-4" onclick="selectProduct('{{ p.category.name }}', {{ p.id }}, '{{ p.name }}', {{ p.price|floatformat:0 }})">Выбрать</button>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="modal fade" id="selectModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header border-bottom-0 p-4 pb-0"><h3 class="modal-title fw-bold" id="modalTitle">Выбор комплектующей</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body p-0" id="modalBody" style="max-height: 65vh; overflow-y: auto;"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 🔥 ИСПРАВЛЕННЫЙ И ПОЛНЫЙ СКРИПТ 🔥 -->
+<script>
+// 1. ТЕМНАЯ ТЕМА
+const themeToggleBtn = document.getElementById('theme-toggle');
+const setIcon = () => themeToggleBtn.innerHTML = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+if (localStorage.getItem('pcstore_theme') === 'dark') document.body.classList.add('dark-mode');
+setIcon();
+themeToggleBtn.addEventListener('click', function() { 
+    document.body.classList.toggle('dark-mode'); 
+    localStorage.setItem('pcstore_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); 
+    setIcon();
+});
+
+// 2. COOKIE И CSRF
+function getCookie(n) { let v=null; if(document.cookie){ document.cookie.split(';').forEach(c=>{ if(c.trim().startsWith(n+'=')) v=decodeURIComponent(c.trim().substring(n.length+1)); }); } return v; }
+const csrftoken = getCookie('csrftoken');
+
+// 3. КОНФИГУРАТОР И МОДАЛКА
+const modal = new bootstrap.Modal(document.getElementById('selectModal'));
+let buildState = {}; 
+let selectedCpuBrand = ''; 
+let selectedBpsWatt = 0; 
+let currentGpuName = '';
+
+function openModal(category) {
+    document.getElementById('modalTitle').innerText = "Выбор: " + category;
+    const allItems = document.querySelectorAll('.prod-item');
+    let html = ''; let found = false;
+    
+    allItems.forEach(item => { 
+        if (item.getAttribute('data-cat') === category) {
+            let pName = item.querySelector('.fw-bold').innerText.toLowerCase();
+            if (category.includes('Материнские') && selectedCpuBrand !== '') {
+                if (selectedCpuBrand === 'intel' && !pName.includes('lga') && !pName.includes('b760') && !pName.includes('z790')) return;
+                if (selectedCpuBrand === 'amd' && !pName.includes('am5') && !pName.includes('b650') && !pName.includes('x670')) return;
+            }
+            html += item.outerHTML; found = true; 
+        } 
+    });
+    document.getElementById('modalBody').innerHTML = found ? html : '<div class="text-center text-muted py-5 fw-bold fs-5">Нет совместимых товаров 😢</div>';
+    modal.show();
+}
+
+function animateValue(id, start, end, duration) {
+    if (start === end) return; const obj = document.getElementById(id); let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp; const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerHTML = Math.floor(progress * (end - start) + start); if (progress < 1) window.requestAnimationFrame(step);
+    }; window.requestAnimationFrame(step);
+}
+
+function updateFPS() {
+    let cyber = 0, cs2 = 0, gta = 0; let n = currentGpuName.toLowerCase();
+    if(n.includes('4090') || n.includes('5090')) { cyber=145; cs2=650; gta=220; }
+    else if(n.includes('4080')) { cyber=115; cs2=500; gta=180; }
+    else if(n.includes('4070')) { cyber=85; cs2=400; gta=150; }
+    else if(n !== '') { cyber=50; cs2=250; gta=90; }
+    animateValue("fps-cyber", parseInt(document.getElementById("fps-cyber").innerText), cyber, 1000);
+    animateValue("fps-cs2", parseInt(document.getElementById("fps-cs2").innerText), cs2, 1000);
+    animateValue("fps-gta", parseInt(document.getElementById("fps-gta").innerText), gta, 1000);
+}
+
+/* 🔥 ИНТЕРАКТИВНЫЙ ПРЕСЕТ ИЗ БИРЖИ 🔥 */
+function loadPresetBuild(gpu, cpu, ram, totalPrice, psuWatt) {
+    currentGpuName = gpu;
+    selectedBpsWatt = psuWatt;
+    selectedCpuBrand = cpu.toLowerCase().includes('intel') ? 'intel' : 'amd';
+
+    document.querySelectorAll('.builder-slot').forEach(slot => {
+        const title = slot.querySelector('.slot-title').innerText;
+        slot.classList.add('filled');
+        if(title.includes('Видео')) { slot.querySelector('.slot-desc').innerText = gpu; slot.querySelector('.slot-price').innerText = "..."; }
+        if(title.includes('Процессор')) { slot.querySelector('.slot-desc').innerText = cpu; slot.querySelector('.slot-price').innerText = "..."; }
+        if(title.includes('Оперативная')) { slot.querySelector('.slot-desc').innerText = ram; slot.querySelector('.slot-price').innerText = "..."; }
+    });
+
+    document.getElementById('total-price').innerText = totalPrice.toLocaleString('ru-RU') + " ₽";
+    document.getElementById('total-power').innerText = Math.round(psuWatt * 0.7) + " Вт";
+    document.getElementById('powerIndicator').classList.remove('power-danger');
+    document.getElementById('powerLabel').innerText = `Запас БП: ${psuWatt}W`;
+    
+    updateFPS();
+}
+
+function selectProduct(category, id, name, price) {
+    buildState[category] = id;
+    if (category.includes('Процессоры')) selectedCpuBrand = name.toLowerCase().includes('intel') ? 'intel' : 'amd';
+    if (category.includes('Блоки питания')) { let match = name.match(/(\d+)W/i) || name.match(/(\d+)ватт/i); selectedBpsWatt = match ? parseInt(match[1]) : 500; }
+    if (category.includes('Видео')) { currentGpuName = name; updateFPS(); }
+
+    document.querySelectorAll('.builder-slot').forEach(slot => {
+        if (slot.querySelector('.slot-title').innerText === category) {
+            slot.classList.add('filled');
+            slot.querySelector('.slot-desc').innerText = name;
+            slot.querySelector('.slot-price').innerText = price.toLocaleString('ru-RU') + " ₽";
+        }
+    });
+    recalculate(); modal.hide();
+}
+
+function recalculate() {
+    let totalSum = 0; let totalPower = 0;
+    document.querySelectorAll('.builder-slot.filled').forEach(slot => {
+        let priceStr = slot.querySelector('.slot-price').innerText.replace(/\D/g, '');
+        if(priceStr) totalSum += parseInt(priceStr);
+        
+        const cat = slot.querySelector('.slot-title').innerText;
+        if (cat.includes('Видео')) totalPower += 320; 
+        else if (cat.includes('Процессор')) totalPower += 150; 
+        else if (cat.includes('Материнская')) totalPower += 60; 
+        else totalPower += 25;
+    });
+    
+    document.getElementById('total-price').innerText = totalSum.toLocaleString('ru-RU') + " ₽";
+    document.getElementById('total-power').innerText = totalPower + " Вт";
+
+    const indicator = document.getElementById('powerIndicator'), label = document.getElementById('powerLabel');
+    if (selectedBpsWatt > 0 && totalPower > selectedBpsWatt) {
+        indicator.classList.add('power-danger'); label.innerText = `КРИТИЧЕСКИ СЛАБЫЙ БП (Нужно >${totalPower}W!)`;
+    } else {
+        indicator.classList.remove('power-danger'); label.innerText = selectedBpsWatt > 0 ? `Запас БП: ${selectedBpsWatt - totalPower}W` : "Расход энергии";
+    }
+}
+
+function addBuildToCart() {
+    const ids = Object.values(buildState);
+    if (ids.length === 0) return alert('Выберите комплектующие или загрузите сборку!');
+    fetch('/add-build/', { method: 'POST', headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' }, body: JSON.stringify({ product_ids: ids }) })
+    .then(r => r.json()).then(data => { if (data.error === "login") window.location.href = "/login/"; else if (data.ok) window.location.href = "/cart/"; });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<h2>Мои заказы</h2>
+
+{% for order in orders %}
+<div class="order-card">
+
+    <h3>Заказ #{{ order.id }}</h3>
+
+    <p>Статус: {{ order.get_status_display }}</p>
+    <p>Сумма: {{ order.total_price }} ₽</p>
+
+    <p>Имя: {{ order.first_name }}</p>
+    <p>Телефон: {{ order.phone }}</p>
+    <p>Адрес: {{ order.address }}</p>
+
+    <p>Комментарий: {{ order.comment }}</p>
+
+</div>
+{% empty %}
+<p>У вас пока нет заказов</p>
+{% endfor %}

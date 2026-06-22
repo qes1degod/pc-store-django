@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Личный кабинет | PC STORE</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<style>
+:root { --bg-light: #f8fafc; --bg-dark: #09090b; --card-light: #ffffff; --card-dark: #18181b; --text-light: #0f172a; --text-dark: #f8fafc; --accent-1: #6366f1; --accent-2: #a855f7; }
+body { background: var(--bg-light); font-family: 'Montserrat', sans-serif; color: var(--text-light); transition: 0.4s; overflow-x: hidden;}
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+body.dark-mode ::-webkit-scrollbar-thumb { background: #3f3f46; }
+
+.navbar { background: rgba(255, 255, 255, 0.65) !important; backdrop-filter: blur(25px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 15px 0; }
+.logo { font-size: 26px; font-weight: 900; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+.bento-card { background: var(--card-light); border-radius: 32px; padding: 40px; border: 1px solid rgba(0,0,0,0.05); transition: 0.4s; box-shadow: 0 10px 30px rgba(0,0,0,0.02); height: 100%; position: relative; overflow: hidden;}
+.bento-card:hover { transform: translateY(-5px); border-color: var(--accent-1); box-shadow: 0 20px 40px rgba(99,102,241,0.1); }
+.btn-mega { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); color: white !important; font-weight: 800; border-radius: 100px; padding: 14px 30px; border: none; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;}
+.btn-mega:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(168,85,247,0.4); }
+
+.profile-header { background: var(--card-light); border-radius: 32px; padding: 40px; display: flex; align-items: center; gap: 40px; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.02);}
+.avatar-huge { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); color: white; display: flex; align-items: center; justify-content: center; font-size: 50px; font-weight: 900; box-shadow: 0 15px 30px rgba(99,102,241,0.3); }
+
+.achievement-badge-card { background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05); border-radius: 20px; padding: 20px; display: flex; align-items: center; gap: 15px; }
+
+/* ================= 🔥 СТИЛИ КОЛЕСА ФОРТУНЫ 🔥 ================= */
+.wheel-wrapper { position: relative; width: 280px; height: 280px; margin: 0 auto; }
+.wheel-canvas { width: 100%; height: 100%; border-radius: 50%; border: 6px solid #1e1e24; box-shadow: 0 10px 30px rgba(139,92,246,0.3); transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); transform: rotate(0deg); }
+.wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ef4444; z-index: 10; filter: drop-shadow(0 4px 5px rgba(0,0,0,0.2)); }
+.wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: white; border-radius: 50%; border: 4px solid #1e1e24; z-index: 5; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+/* ТЕМНАЯ ТЕМА */
+body.dark-mode { background: var(--bg-dark); color: var(--text-dark); }
+body.dark-mode .navbar { background: rgba(9, 9, 11, 0.75) !important; border-color: rgba(255,255,255,0.05); }
+body.dark-mode .bento-card, body.dark-mode .profile-header { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
+body.dark-mode .form-control { background: #27272a !important; border-color: #3f3f46 !important; color: white !important; }
+body.dark-mode .achievement-badge-card { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); }
+body.dark-mode .table { color: white; }
+body.dark-mode .table td, body.dark-mode .table th { border-color: #3f3f46; background: transparent; }
+body.dark-mode .wheel-canvas { border-color: #27272a; box-shadow: 0 10px 30px rgba(168,85,247,0.2); }
+body.dark-mode .wheel-center { background: #18181b; border-color: #27272a; }
+body.dark-mode .btn-light { background: #27272a; color: white; border-color: #3f3f46; }
+body.dark-mode .text-muted { color: #94a3b8 !important; }
+body.dark-mode .text-secondary { color: #cbd5e1 !important; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container d-flex align-items-center justify-content-between">
+        <a href="{% url 'home' %}" class="logo">PC STORE</a>
+        <div class="d-flex gap-3 align-items-center">
+            <button id="theme-toggle" class="btn btn-light rounded-circle shadow-sm border-0 fs-5" style="width:44px; height:44px;">🌙</button>
+            <a href="{% url 'home' %}" class="btn btn-dark rounded-pill fw-bold px-4 py-2" onclick="playClick()">В магазин</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5 mb-5">
+    <div class="profile-header">
+        <div class="avatar-huge">{{ user.username|make_list|first|upper }}</div>
+        <div>
+            <h1 class="fw-black mb-1" style="font-size: 42px; letter-spacing: -1px;">Привет, {{ user.username }}!</h1>
+            <p class="text-secondary fs-5 fw-bold mb-0">Твой премиальный аккаунт PC STORE.</p>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+            <div class="bento-card text-center d-flex flex-column justify-content-center align-items-center">
+                <i class="bi bi-trophy-fill mb-3" style="font-size: 50px; color: var(--accent-1);"></i>
+                <h5 class="fw-bold text-secondary mb-1">Ваш статус</h5>
+                <h2 class="fw-black" style="color: var(--accent-2);">{{ rank }}</h2>
+                <div class="progress w-100 mt-4" style="height: 12px; border-radius: 10px; background: rgba(0,0,0,0.05);">
+                    <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" style="width: {{ progress }}%"></div>
+                </div>
+                <small class="text-muted mt-2 fw-bold">До ранга "{{ next_rank }}"</small>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="bento-card text-center d-flex flex-column justify-content-center align-items-center" style="background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); color: white; border: none;">
+                <i class="bi bi-gem mb-3" style="font-size: 50px;"></i>
+                <h5 class="fw-bold opacity-75 mb-1 text-white">Баланс PC Coins</h5>
+                <h1 class="fw-black text-white" style="font-size: 50px;" id="liveCoinsBalance">{{ pc_coins }} 🪙</h1>
+                <p class="mt-2 mb-0 opacity-75 fw-bold">Оплачивайте до 100% стоимости заказов!</p>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="bento-card">
+                <h4 class="fw-bold mb-4"><i class="bi bi-person-gear text-primary me-2"></i> Настройки</h4>
+                <form method="POST" onsubmit="playClick()">
+                    {% csrf_token %}
+                    <div class="mb-3"><input type="text" name="first_name" class="form-control rounded-pill px-4 py-3 fw-bold" value="{{ user.first_name }}" placeholder="Имя"></div>
+                    <div class="mb-4"><input type="email" name="email" class="form-control rounded-pill px-4 py-3 fw-bold" value="{{ user.email }}" placeholder="Email"></div>
+                    <button type="submit" class="btn-mega w-100"><i class="bi bi-check2-circle fs-5"></i> Сохранить</button>
+                </form>
+                <form method="post" action="{% url 'logout' %}" class="mt-3" onsubmit="playClick()">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-light text-danger fw-bold rounded-pill w-100 py-3 border">🚪 Выйти из аккаунта</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-7">
+            <h2 class="fw-black mb-4">🏆 Достижения и Квесты</h2>
+            <div class="d-flex flex-column gap-3">
+                <div class="achievement-badge-card">
+                    <div class="fs-2"><i class="bi bi-shield-check text-success"></i></div>
+                    <div>
+                        <div class="fw-bold mb-1">Первая кровь</div>
+                        <div class="small text-secondary">Успешная регистрация на сайте. <span class="text-warning fw-black">+50 🪙</span></div>
+                        <div class="text-success small fw-bold mt-1"><i class="bi bi-check-all"></i> Выполнено</div>
+                    </div>
+                </div>
+                <div class="achievement-badge-card">
+                    <div class="fs-2"><i class="bi bi-chat-heart text-primary"></i></div>
+                    <div>
+                        <div class="fw-bold mb-1">Экспертное мнение</div>
+                        <div class="small text-secondary">Оставить 3 реальных отзыва. <span class="text-warning fw-black">+150 🪙</span></div>
+                        <div class="text-primary small fw-bold mt-1">Прогресс: 1/3</div>
+                    </div>
+                </div>
+                <div class="achievement-badge-card">
+                    <div class="fs-2"><i class="bi bi-cpu text-warning"></i></div>
+                    <div>
+                        <div class="fw-bold mb-1">Техно-магнат</div>
+                        <div class="small text-secondary">Собрать ПК в онлайн конфигураторе. <span class="text-warning fw-black">+300 🪙</span></div>
+                        <div class="text-muted small fw-bold mt-1">🔒 Заблокировано</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <h2 class="fw-black mb-4">🔮 Ежедневный бонус</h2>
+            <div class="bento-card d-flex flex-column align-items-center justify-content-center text-center p-4">
+                <div class="wheel-wrapper mb-4">
+                    <div class="wheel-pointer"></div>
+                    <canvas id="wheel" class="wheel-canvas" width="280" height="280"></canvas>
+                    <div class="wheel-center"></div>
+                </div>
+                <button class="btn-mega px-5 py-3 fs-5" id="spinBtn" onclick="spinWheel()">КРУТИТЬ КОЛЕСО</button>
+                <div class="text-success fw-bold mt-3" id="wheelPrizeText" style="display:none; font-size:16px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="fw-black mb-4">История заказов</h2>
+    <div class="bento-card p-0 overflow-hidden border-0">
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle text-center">
+                <thead class="table-light">
+                    <tr><th class="py-4">№ Заказа</th><th>Сумма</th><th>Статус</th><th>Дата</th></tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td class="py-4 fw-bold">#{{ order.id }}</td>
+                        <td class="fw-black text-primary fs-5">{{ order.total_price|floatformat:0 }} ₽</td>
+                        <td><span class="badge bg-success rounded-pill px-3 py-2 fw-bold">{{ order.status|default:"В сборке" }}</span></td>
+                        <td class="text-secondary fw-bold">{{ order.created_at|date:"d.m.Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-center py-5 text-muted fw-bold fs-5">Вы еще не делали заказов 😢</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 9999;"><div id="liveToast" class="toast align-items-center text-white border-0 bg-success"><div class="d-flex"><div class="toast-body fw-bold" id="toastMessage"></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div></div>
+
+<script>
+// ==========================================
+// 🔥 ОПЦИЯ 3: ФУТУРИСТИЧЕСКИЙ СИНТЕЗАТОР ЗВУКОВ (Web Audio API) 🔥
+// ==========================================
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playClick() {
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.05);
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+}
+
+function playToggleTheme() {
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    let isDark = document.body.classList.contains('dark-mode');
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(isDark ? 600 : 300, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(isDark ? 300 : 600, audioCtx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+}
+
+function playTick() {
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.01);
+    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.01);
+}
+
+function playWinSound() {
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // До-Ми-Соль-До (Мажорный аккорд)
+    notes.forEach((freq, i) => {
+        setTimeout(() => {
+            const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        }, i * 80);
+    });
+}
+
+// Переключение темы с привязкой звука футуризма
+const themeToggleBtn = document.getElementById('theme-toggle');
+if (localStorage.getItem('pcstore_theme') === 'dark') document.body.classList.add('dark-mode');
+themeToggleBtn.innerHTML = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+
+themeToggleBtn.addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('pcstore_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    themeToggleBtn.innerHTML = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    playToggleTheme();
+});
+
+function showToast(msg) {
+    const t = document.getElementById('liveToast');
+    document.getElementById('toastMessage').innerText = msg;
+    new bootstrap.Toast(t, {delay: 4000}).show();
+}
+
+// ==========================================
+// 🔥 ЛОГИКА ОТРИСОВКИ И КРУЧЕНИЯ КОЛЕСА ФОРТУНЫ 🔥
+// ==========================================
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+const prizes = ["+10 🪙", "Try Again ❌", "+25 🪙", "Free Delivery 🚚", "+50 🪙", "Promo 10% 🎟️"];
+const colors = ["#6366f1", "#1e1e24", "#a855f7", "#27272a", "#4f46e5", "#7c3aed"];
+const numSectors = prizes.length;
+const arc = Math.PI * 2 / numSectors;
+
+function drawWheel() {
+    ctx.clearRect(0, 0, 280, 280);
+    for (let i = 0; i < numSectors; i++) {
+        let angle = i * arc;
+        ctx.fillStyle = colors[i];
+        ctx.beginPath();
+        ctx.moveTo(140, 140);
+        ctx.arc(140, 140, 135, angle, angle + arc);
+        ctx.lineTo(140, 140);
+        ctx.fill();
+
+        // Добавляем текст призов
+        ctx.save();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 13px Montserrat";
+        ctx.translate(140, 140);
+        ctx.rotate(angle + arc / 2);
+        ctx.textAlign = "right";
+        ctx.fillText(prizes[i], 120, 5);
+        ctx.restore();
+    }
+}
+drawWheel();
+
+let isSpinning = false;
+function spinWheel() {
+    if (isSpinning) return;
+    isSpinning = true;
+    playClick();
+    
+    document.getElementById("spinBtn").disabled = true;
+    document.getElementById("wheelPrizeText").style.display = "none";
+
+    const selectedSector = Math.floor(Math.random() * numSectors);
+    const additionalRotations = 5; // Сколько полных кругов сделает колесо
+    
+    // Рассчитываем финальный угол вращения
+    const targetAngle = (additionalRotations * 360) + (360 - (selectedSector * (360 / numSectors))) - (180 / numSectors);
+    
+    const wheelEl = document.getElementById("wheel");
+    wheelEl.style.transform = `rotate(${targetAngle}deg)`;
+
+    // Звуковой эффект трещотки колеса (клики во время кручения)
+    let tickCount = 0;
+    let tickInterval = setInterval(() => {
+        if(tickCount < 35) { playTick(); tickCount++; } 
+        else { clearInterval(tickInterval); }
+    }, 100);
+
+    setTimeout(() => {
+        clearInterval(tickInterval);
+        isSpinning = false;
+        playWinSound(); // Запуск победного джингла
+
+        const prize = prizes[selectedSector];
+        const prizeBox = document.getElementById("wheelPrizeText");
+        prizeBox.style.display = "block";
+        prizeBox.innerHTML = `🎉 Вы выиграли Бонус: <span class="fw-black">${prize}</span>!`;
+
+        // Если выиграли монеты — обновляем Bento счетчик на лету без перезагрузки!
+        if (prize.includes("🪙")) {
+            const coinsAdded = parseInt(prize);
+            const balanceEl = document.getElementById("liveCoinsBalance");
+            let currentBalance = parseInt(balanceEl.innerText) || 0;
+            balanceEl.innerText = (currentBalance + coinsAdded) + " 🪙";
+            showToast(`🪙 На ваш баланс зачислено +${coinsAdded} PC Coins!`);
+        } else {
+            showToast(`🎁 Бонус "${prize}" успешно активирован в вашем профиле!`);
+        }
+    }, 4000); // 4 секунды длится анимация вращения по CSS
+}
+</script>
+</body>
+</html>

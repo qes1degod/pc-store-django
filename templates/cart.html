@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Оформление заказа | PC STORE</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<style>
+:root { --bg-light: #f8fafc; --bg-dark: #09090b; --card-light: #ffffff; --card-dark: #18181b; --text-light: #0f172a; --text-dark: #f8fafc; --accent-1: #6366f1; --accent-2: #a855f7; }
+body { background: var(--bg-light); font-family: 'Montserrat', sans-serif; color: var(--text-light); transition: 0.4s; overflow-x: hidden;}
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+body.dark-mode ::-webkit-scrollbar-thumb { background: #3f3f46; }
+
+.navbar { background: rgba(255, 255, 255, 0.65) !important; backdrop-filter: blur(25px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 15px 0; }
+.logo { font-size: 26px; font-weight: 900; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+.bento-card { background: var(--card-light); border-radius: 32px; padding: 40px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.02); height: 100%; }
+.btn-mega { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); color: white !important; font-weight: 800; border-radius: 100px; padding: 18px 30px; border: none; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;}
+.btn-mega:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(168, 85, 247, 0.4); }
+.cart-item-card { background: var(--bg-light); border-radius: 24px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); transition: 0.3s; }
+
+/* 🔥 ФОРМЫ И ИНПУТЫ 🔥 */
+.form-control, .form-select { border-radius: 16px; font-weight: 600; padding: 14px 20px; border: 1px solid #e2e8f0; background: var(--bg-light); color: var(--text-light); transition: 0.3s; }
+.form-control:focus, .form-select:focus { border-color: var(--accent-1); box-shadow: 0 0 0 4px rgba(99,102,241,0.1); outline: none; }
+
+/* 🔥 СТИЛИ ДЛЯ ПРЕМИАЛЬНОГО КИБЕР-ЧЕКА (БИЛЕТА) 🔥 */
+.ticket-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(9, 9, 11, 0.8); backdrop-filter: blur(25px); z-index: 9999; display: none; justify-content: center; align-items: center; }
+.cyber-ticket { width: 100%; max-width: 450px; background: #111115; color: white; border-radius: 30px; border: 2px solid #222; box-shadow: 0 30px 70px rgba(139, 92, 246, 0.3); position: relative; overflow: hidden; font-family: monospace; letter-spacing: 0.5px; animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.ticket-header { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); padding: 25px; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 900; }
+.ticket-notch-l, .ticket-notch-r { position: absolute; width: 30px; height: 30px; background: rgba(9,9,11,1); border-radius: 50%; top: 70%; z-index: 10; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+.ticket-notch-l { left: -15px; } .ticket-notch-r { right: -15px; }
+.ticket-body { padding: 30px; border-bottom: 2px dashed #333; }
+.ticket-footer { padding: 25px; text-align: center; background: #09090b; }
+
+/* 🔥 ТЕМНАЯ ТЕМА ДЛЯ ФОРМ 🔥 */
+body.dark-mode { background: var(--bg-dark); color: var(--text-dark); }
+body.dark-mode .navbar { background: rgba(9, 9, 11, 0.75) !important; border-color: rgba(255,255,255,0.05); }
+body.dark-mode .bento-card { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
+body.dark-mode .cart-item-card { background: var(--bg-dark); border-color: rgba(255,255,255,0.05); }
+
+/* Идеальные контрастные инпуты в темной теме */
+body.dark-mode .form-control { 
+    background-color: #27272a !important; 
+    border-color: #3f3f46 !important; 
+    color: #f8fafc !important; 
+}
+
+/* Строгий селектор (одна стрелочка) */
+body.dark-mode .form-select { 
+    background-color: #27272a !important; 
+    border-color: #3f3f46 !important; 
+    color: #f8fafc !important; 
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 1.25rem center !important;
+    background-size: 16px 12px !important;
+}
+
+body.dark-mode .form-control::placeholder { color: #94a3b8 !important; opacity: 1; }
+body.dark-mode .text-muted { color: #94a3b8 !important; }
+body.dark-mode .text-secondary { color: #cbd5e1 !important; }
+</style>
+</head>
+<body>
+
+<!-- 🔥 ЭЛИТНЫЙ КИБЕР-ЧЕК БИЛЕТ 🔥 -->
+<div class="ticket-overlay" id="ticketOverlay">
+    <div class="cyber-ticket">
+        <div class="ticket-header">
+            <h4 class="m-0 text-white"><i class="bi bi-patch-check-fill me-2"></i> ЗАКАЗ УСПЕШНО ОФОРМЛЕН</h4>
+            <small style="font-size:10px; letter-spacing:2px;" class="text-white-50">PC STORE ECOSYSTEM 2026</small>
+        </div>
+        <div class="ticket-body">
+            <div class="d-flex justify-content-between mb-3"><span>ID ЗАКАЗА:</span><span class="text-info fw-bold" id="t-id">#98342</span></div>
+            <div class="d-flex justify-content-between mb-3"><span>ПОЛУЧАТЕЛЬ:</span><span class="text-white text-end" id="t-name">Руслан К.</span></div>
+            <div class="d-flex justify-content-between mb-3"><span>ТЕЛЕФОН:</span><span class="text-white" id="t-phone">+7 (968) ***-13-XX</span></div>
+            <div class="d-flex justify-content-between mb-3"><span>ДОСТАВКА:</span><span class="text-success" id="t-delivery">Курьер</span></div>
+            <div class="d-flex justify-content-between mt-4 pt-3 border-top border-secondary">
+                <span class="fw-bold">ИТОГО К ОПЛАТЕ:</span>
+                <span class="fw-bold text-warning fs-5" id="t-total">154 000 ₽</span>
+            </div>
+        </div>
+        <div class="ticket-notch-l"></div><div class="ticket-notch-r"></div>
+        <div class="ticket-footer">
+            <div class="fs-1 text-white-50 mb-2"><i class="bi bi-qr-code"></i></div>
+            <div class="text-muted small">Сохраните этот билет (скриншот). Инженеры уже приступили к обработке заказа!</div>
+            <button class="btn btn-sm btn-outline-light rounded-pill mt-3 px-4 fw-bold" onclick="window.location.href='{% url 'home' %}'">В магазин</button>
+        </div>
+    </div>
+</div>
+
+<nav class="navbar">
+    <div class="container d-flex align-items-center justify-content-between">
+        <a href="{% url 'home' %}" class="logo">PC STORE</a>
+        <div class="d-flex gap-3 align-items-center">
+            <button id="theme-toggle" class="btn btn-light rounded-circle shadow-sm border-0 fs-5 text-warning bg-dark" style="width:44px; height:44px;">🌙</button>
+            <a href="{% url 'home' %}" class="btn btn-dark rounded-pill fw-bold px-4 py-2">В каталог</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5 mb-5">
+    <h1 class="fw-black mb-4" style="font-size: 44px; letter-spacing: -1px;">Оформление заказа</h1>
+    <div class="row g-4">
+        <!-- ТОВАРЫ -->
+        <div class="col-lg-7">
+            <div class="bento-card">
+                <h3 class="fw-black mb-4">🛒 Состав заказа</h3>
+                {% for item in items %}
+                <div class="cart-item-card d-flex align-items-center gap-4 mb-3" id="item-{{ item.id }}">
+                    {% if item.product.image %}<img src="{{ item.product.image }}" style="width:100px; height:100px; object-fit:cover; border-radius:16px; background:#f1f5f9;">{% endif %}
+                    <div class="flex-grow-1">
+                        <h5 class="fw-bold mb-1 lh-sm">{{ item.product.name }}</h5>
+                        <div class="text-secondary fw-semibold mb-2 fs-6">{{ item.product.brand }}</div>
+                        <div class="text-primary fw-black fs-4">{{ item.product.price|floatformat:0 }} ₽</div>
+                    </div>
+                    <div class="d-flex align-items-center bg-dark bg-opacity-10 rounded-pill p-1">
+                        <button class="btn btn-sm fw-bold rounded-circle border-0 fs-5" onclick="updateItem({{ item.id }}, 'minus')" style="width:36px;height:36px;">-</button>
+                        <span class="fw-black fs-5 mx-2" id="qty-{{ item.id }}">{{ item.quantity }}</span>
+                        <button class="btn btn-sm fw-bold rounded-circle border-0 fs-5" onclick="updateItem({{ item.id }}, 'plus')" style="width:36px;height:36px;">+</button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5 opacity-50">
+                    <i class="bi bi-cart-x" style="font-size: 80px;"></i><h3 class="fw-bold mt-4">Корзина пуста</h3>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- АНКЕТА И ФОРМА ОФОРМЛЕНИЯ -->
+        <div class="col-lg-5">
+            <div class="bento-card position-sticky" style="top: 100px;">
+                <h3 class="fw-black mb-4">Итоги</h3>
+                <div class="d-flex justify-content-between mb-3 fs-5 fw-bold"><span class="text-secondary">Сумма:</span> <span id="base-total">{{ total|floatformat:0 }} ₽</span></div>
+                <div class="d-flex justify-content-between mb-4 fs-5 fw-bold"><span class="text-secondary">Доставка:</span> <span class="text-success" id="delivery-price">0 ₽</span></div>
+                
+                <div class="d-flex gap-2 mb-4">
+                    <input type="text" id="promo-code" class="form-control rounded-pill px-4 fw-bold" placeholder="Промокод (напр. PCSTORE)">
+                    <button type="button" class="btn btn-dark rounded-pill fw-bold px-4" onclick="applyPromo()">Применить</button>
+                </div>
+                <div id="discount-display" class="text-success fw-bold mb-3" style="display:none; font-size:14px;">🎉 Применена скидка: <span id="discount-val">0</span>%</div>
+
+                <hr class="opacity-10 mb-4">
+                <div class="d-flex justify-content-between align-items-end mb-4"><span class="text-secondary fw-bold fs-4 mb-1">К оплате:</span> <span class="text-primary fw-black" style="font-size: 38px; line-height: 1;" id="final-total">{{ total|floatformat:0 }} ₽</span></div>
+                <div class="text-end text-success fw-bold mb-4" id="cashback-info">+ 0 🪙 кэшбека за заказ!</div>
+                
+                <form method="POST" action="{% url 'create_order' %}" id="checkoutForm" onsubmit="handleCheckoutForm(event)">
+                    {% csrf_token %}
+                    <div class="row g-2 mb-3">
+                        <div class="col-6"><input type="text" id="f_name" name="first_name" class="form-control rounded-pill" placeholder="Имя" required></div>
+                        <div class="col-6"><input type="text" id="l_name" name="last_name" class="form-control rounded-pill" placeholder="Фамилия" required></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <input type="email" id="f_email" name="email" class="form-control rounded-pill" placeholder="Email (для чека)" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <input type="tel" id="f_phone" name="phone" class="form-control rounded-pill" placeholder="Номер телефона" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <select id="delivery" name="delivery_type" class="form-select rounded-pill" onchange="calcTotal()">
+                            <option value="pickup" data-price="0">🚶 Самовывоз (Бесплатно)</option>
+                            <option value="courier" data-price="500">🚚 Курьером до двери (+500 ₽)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Поле адреса появляется плавно только при выборе курьера -->
+                    <div class="mb-4" id="address-box" style="display: none; transition: 0.3s;">
+                        <input type="text" name="address" id="f_address" class="form-control rounded-pill" placeholder="Полный адрес доставки (Город, Улица, Дом)">
+                    </div>
+
+                    <!-- БЛОК PC COINS -->
+                    <div class="mb-4 p-4 rounded-4" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);">
+                        <div class="d-flex justify-content-between mb-2 fw-bold text-warning"><span>Списать PC Coins:</span> <span id="spent-coins-display">0 🪙</span></div>
+                        <input type="range" class="form-range" name="spend_coins" id="spend-coins-slider" min="0" max="{{ pc_coins|default:0 }}" value="0" oninput="calcTotal()" {% if not pc_coins or pc_coins == 0 %}disabled{% endif %}>
+                        <div class="text-secondary fw-bold mt-2" style="font-size: 13px;">Доступно: {{ pc_coins|default:0 }} 🪙</div>
+                    </div>
+                    
+                    <button type="submit" class="btn-mega w-100 fs-5" {% if not items %}disabled{% endif %}>Оплатить заказ <i class="bi bi-arrow-right"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🔥 ПОДКЛЮЧЕНИЕ СКРИПТА КОНФЕТТИ ИЗ CDN 🔥 -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+const themeToggleBtn = document.getElementById('theme-toggle');
+const setIcon = () => themeToggleBtn.innerHTML = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+if (localStorage.getItem('pcstore_theme') === 'dark') { document.body.classList.add('dark-mode'); }
+setIcon();
+themeToggleBtn.addEventListener('click', function() { document.body.classList.toggle('dark-mode'); localStorage.setItem('pcstore_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); setIcon(); });
+
+function getCookie(n) { let v=null; if(document.cookie){ document.cookie.split(';').forEach(c=>{ if(c.trim().startsWith(n+'=')) v=decodeURIComponent(c.trim().substring(n.length+1)); }); } return v; }
+const csrftoken = getCookie('csrftoken');
+let baseTotal = parseFloat("{{ total }}".replace(/\s/g, '').replace(',', '.')) || 0;
+let currentDiscountPercent = 0;
+
+function calcTotal() {
+    const delSelect = document.getElementById("delivery");
+    const dPrice = parseFloat(delSelect.options[delSelect.selectedIndex].dataset.price);
+    
+    const addrBox = document.getElementById("address-box");
+    const addrInput = document.getElementById("f_address");
+    if (delSelect.value === 'courier') {
+        addrBox.style.display = 'block';
+        addrInput.setAttribute('required', 'required');
+    } else {
+        addrBox.style.display = 'none';
+        addrInput.removeAttribute('required');
+    }
+
+    document.getElementById("delivery-price").innerText = dPrice > 0 ? dPrice + " ₽" : "Бесплатно";
+    document.getElementById("base-total").innerText = baseTotal.toLocaleString('ru-RU') + " ₽";
+    const slider = document.getElementById("spend-coins-slider");
+    let coinsToSpend = slider ? parseInt(slider.value) : 0;
+    let totalWithDiscount = baseTotal - (baseTotal * (currentDiscountPercent / 100));
+    let finalTotal = totalWithDiscount + dPrice - coinsToSpend;
+    if (finalTotal < 0) { finalTotal = 0; if (slider) slider.value = totalWithDiscount + dPrice; coinsToSpend = totalWithDiscount + dPrice; }
+    if (slider) document.getElementById("spent-coins-display").innerText = coinsToSpend + " 🪙";
+    document.getElementById("final-total").innerText = Math.max(0, Math.round(finalTotal)).toLocaleString('ru-RU') + " ₽";
+    document.getElementById("cashback-info").innerText = "+ " + Math.round(finalTotal * 0.05) + " 🪙 кэшбека за заказ!";
+}
+
+/* 🔥 ЛОГИКА ТРИГГЕРА КИБЕР-ЧЕКА С ВЗРЫВОМ КОНФЕТТИ (С ВЫСОКИМ Z-INDEX) 🔥 */
+function handleCheckoutForm(e) {
+    e.preventDefault(); 
+    
+    document.getElementById("t-id").innerText = "#" + Math.floor(10000 + Math.random() * 90000);
+    document.getElementById("t-name").innerText = document.getElementById("f_name").value + " " + document.getElementById("l_name").value;
+    document.getElementById("t-phone").innerText = document.getElementById("f_phone").value;
+    document.getElementById("t-delivery").innerText = document.getElementById("delivery").value === 'courier' ? 'Курьер 🚚' : 'Самовывоз 🚶';
+    document.getElementById("t-total").innerText = document.getElementById("final-total").innerText;
+
+    // Показываем билет (z-index: 9999)
+    document.getElementById("ticketOverlay").style.display = "flex";
+    
+    // Запускаем взрыв конфетти поверх всего (zIndex: 10000)
+    confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 }, zIndex: 10000 });
+    setTimeout(() => { confetti({ particleCount: 150, spread: 120, origin: { y: 0.5 }, zIndex: 10000 }); }, 300);
+
+    setTimeout(() => {
+        document.getElementById("checkoutForm").submit();
+    }, 5000);
+}
+
+function applyPromo() {
+    const code = document.getElementById("promo-code").value.trim();
+    if (!code) return;
+    if (code.toLowerCase().includes('pcstore')) { 
+        currentDiscountPercent = 10; 
+        document.getElementById("discount-display").style.display = "block"; 
+        document.getElementById("discount-val").innerText = "10"; 
+    }
+    calcTotal();
+}
+
+function updateItem(id, action){
+    fetch("/cart/update/", { method: "POST", headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken }, body: JSON.stringify({ item_id: id, action: action }) })
+    .then(r => r.json()).then(data => {
+        if (!data.ok) return;
+        let qtyEl = document.getElementById("qty-" + id); let currentQty = parseInt(qtyEl.innerText);
+        qtyEl.innerText = action === "plus" ? currentQty + 1 : currentQty - 1;
+        if (currentQty - 1 <= 0 && action === "minus") { document.getElementById("item-" + id).remove(); if (data.cart_count === 0) window.location.reload(); }
+        baseTotal = parseFloat(data.total); calcTotal();
+    });
+}
+document.addEventListener('DOMContentLoaded', calcTotal);
+</script>
+</body>
+</html>
