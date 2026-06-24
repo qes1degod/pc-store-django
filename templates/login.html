@@ -2,137 +2,259 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>PC STORE — Вход</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход | PC STORE Premium</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
+        :root {
+            --bg-dark: #09090b;
+            --card-dark: rgba(24, 24, 27, 0.7);
+            --accent-1: #6366f1;
+            --accent-2: #a855f7;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
         body {
             margin: 0;
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a, #1e293b);
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            position: relative;
         }
 
-        .login-box {
-            width: 420px;
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 18px;
-            padding: 30px;
-            color: white;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 10s infinite alternate ease-in-out;
+            z-index: 1;
         }
+        .orb-1 { width: 400px; height: 400px; background: var(--accent-1); top: -100px; left: -100px; }
+        .orb-2 { width: 350px; height: 350px; background: var(--accent-2); bottom: -50px; right: -100px; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.1); }
+        }
+
+        .auth-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .auth-card {
+            background: var(--card-dark);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 50px 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+        }
+        .btn-back:hover { color: white; transform: translateX(-5px); }
 
         .logo {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
         }
-
-        .logo span {
-            color: #38bdf8;
-        }
-
         .subtitle {
-            text-align: center;
-            font-size: 13px;
-            color: #94a3b8;
-            margin-bottom: 25px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        input {
-            padding: 12px;
-            margin-bottom: 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
-            color: white;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: #38bdf8;
-        }
-
-        button {
-            padding: 12px;
-            background: #38bdf8;
-            border: none;
-            border-radius: 10px;
-            color: black;
+            color: var(--text-muted);
             font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
+            font-size: 15px;
+            margin-bottom: 35px;
         }
 
-        button:hover {
-            transform: scale(1.03);
-        }
-
-        .link {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 13px;
-            color: #94a3b8;
-        }
-
-        .link a {
-            color: #38bdf8;
-            text-decoration: none;
-        }
-
-        .error {
-            color: #f87171;
+        form { text-align: left; }
+        
+        form label {
+            display: block;
             font-size: 12px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            margin-top: 20px;
         }
+
+        .custom-input {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+        .custom-input:focus {
+            border-color: var(--accent-1);
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        /* 🔥 ИСПРАВЛЕНИЕ: Броня от браузерного автозаполнения 🔥 */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #18181b inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+            border-radius: 16px;
+        }
+
+        .errorlist {
+            list-style: none; padding: 0; margin: 5px 0 0 0;
+            color: #ef4444; font-size: 12px; font-weight: 700;
+        }
+        .non-field-errors {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: 12px; border-radius: 8px;
+            color: #ef4444; font-size: 13px; font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .btn-mega {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: white;
+            font-weight: 800;
+            font-size: 16px;
+            border: none;
+            border-radius: 100px;
+            padding: 18px;
+            margin-top: 35px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-mega:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(168, 85, 247, 0.4);
+        }
+
+        .auth-footer {
+            margin-top: 30px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .auth-footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 800;
+            transition: 0.3s;
+        }
+        .auth-footer a:hover { color: var(--accent-2); }
+        
+        .helptext { display: none; }
     </style>
 </head>
-
 <body>
 
-<div class="login-box">
+<div class="glow-orb orb-1"></div>
+<div class="glow-orb orb-2"></div>
 
-    <!-- 🔥 ЛОГО -->
-    <div class="logo">
-        PC <span>STORE</span>
-    </div>
-    <div class="subtitle">
-        Вход в систему управления заказами
-    </div>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        
+        <a href="{% url 'home' %}" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Назад в магазин
+        </a>
 
-    <!-- 🔐 ФОРМА -->
-    <form method="post">
-        {% csrf_token %}
+        <div class="logo">PC STORE</div>
+        <div class="subtitle">Добро пожаловать в систему</div>
 
-        {% for field in form %}
-            {{ field }}
-            {% if field.errors %}
-                <div class="error">{{ field.errors }}</div>
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="non-field-errors">
+                    {{ form.non_field_errors }}
+                </div>
             {% endif %}
-        {% endfor %}
 
-        <button type="submit">Войти</button>
-    </form>
+            {% for field in form %}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    {{ field.errors }}
+                {% endif %}
+            {% endfor %}
 
-    <!-- 🔗 REGISTER -->
-    <div class="link">
-        Нет аккаунта?
-        <a href="{% url 'register' %}">Регистрация</a>
+            <button type="submit" class="btn-mega">
+                Войти <i class="bi bi-box-arrow-in-right fs-5"></i>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Впервые у нас? <a href="{% url 'register' %}">Создать аккаунт</a>
+        </div>
     </div>
-
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const inputs = document.querySelectorAll('form input');
+        inputs.forEach(input => {
+            input.classList.add('custom-input');
+            
+            // Задаем плейсхолдеры
+            if(input.name.toLowerCase().includes('username')) {
+                input.placeholder = "Ваш логин";
+            }
+            if(input.name.toLowerCase().includes('password')) {
+                input.placeholder = "••••••••";
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

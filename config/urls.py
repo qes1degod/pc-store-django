@@ -9,8 +9,10 @@ urlpatterns = [
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('profile/', views.profile, name='profile'),
+    path('custom-build/', views.custom_build, name='custom_build'),
+    path('info/<str:slug>/', views.info_page, name='info_page'),
     
-    # 🔥 НОВОЕ: Конфигуратор ПК
+    #  Конфигуратор ПК
     path('builder/', views.pc_builder, name='builder'),
     path('add-build/', views.add_build_to_cart, name='add_build_to_cart'),
 

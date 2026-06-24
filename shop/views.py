@@ -12,20 +12,25 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import json
 
-# 🔥 ИМПОРТ ПАГИНАТОРА 🔥
+#  ИМПОРТ ПАГИНАТОРА 
 from django.core.paginator import Paginator
 from .models import Product, Cart, Order, OrderItem, Favorite, Review, Category, UserProfile
 
-# ================= ADMIN CHECK =================
+#ADMIN CHECK 
 def is_admin(user): 
     return user.is_authenticated and user.is_staff
 
-# ================= HOME (С ИНТЕГРАЦИЕЙ ПАГИНАЦИИ) =================
+# HOME (С ИНТЕГРАЦИЕЙ ПАГИНАЦИИ И КАТЕГОРИЙ)
 def home(request):
     search = request.GET.get('search', '')
     sort_by = request.GET.get('sort_by')
+    category_query = request.GET.get('category')  #ПРОВЕРКА КАТЕГОРИИ 
     
     products = Product.objects.all()
+    
+    #  ФИЛЬТРАЦИЯ ПО КАТЕГОРИИ 
+    if category_query:
+        products = products.filter(category__name=category_query)
     
     if search: 
         products = products.filter(
@@ -42,7 +47,7 @@ def home(request):
     elif sort_by == 'new': 
         products = products.order_by('-id')
 
-    # 🔥 ВНЕДРЕНИЕ ПАГИНАЦИИ (По 12 товаров на страницу) 🔥
+    #  ВНЕДРЕНИЕ ПАГИНАЦИИ 
     paginator = Paginator(products, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -59,12 +64,12 @@ def home(request):
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render(request, 'products_partial.html', {
-            'products': page_obj, # Передаем page_obj вместо products
+            'products': page_obj,
             'favorites_ids': favorites_ids
         })
         
     return render(request, 'home.html', {
-        'products': page_obj, # Передаем page_obj вместо products
+        'products': page_obj,
         'cart_count': cart_count, 
         'favorite_count': favorite_count, 
         'favorites_ids': favorites_ids, 
@@ -72,7 +77,7 @@ def home(request):
         'search': search
     })
 
-# ================= PROFILE & GAMIFICATION =================
+#PROFILE & GAMIFICATION 
 @login_required
 def profile(request):
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
@@ -100,7 +105,7 @@ def profile(request):
         'orders': orders, 'total_spent': total_spent, 'pc_coins': profile.pc_coins, 'rank': rank, 'next_rank': next_rank, 'progress': progress
     })
 
-# ================= PC BUILDER =================
+#PC BUILDER 
 def pc_builder(request):
     categories = Category.objects.all()
     products = Product.objects.all()
@@ -119,7 +124,7 @@ def add_build_to_cart(request):
             cart_item.save()
     return JsonResponse({"ok": True})
 
-# ================= AUTH =================
+# AUTH
 def register(request):
     form = UserCreationForm()
     if request.method == 'POST':
@@ -130,7 +135,7 @@ def register(request):
             return redirect('home')
     return render(request, 'register.html', {'form': form})
 
-# ================= CART =================
+# CART 
 @require_POST
 def add_to_cart(request, product_id):
     if not request.user.is_authenticated: 
@@ -200,7 +205,7 @@ def toggle_favorite(request, product_id):
     if not created: favorite.delete()
     return JsonResponse({"ok": True, "liked": created, "count": Favorite.objects.filter(user=request.user).count()})
 
-# ================= PAGES =================
+#PAGES 
 def favorites(request):
     if not request.user.is_authenticated: return redirect('login')
     return render(request, "favorites.html", {"items": Favorite.objects.filter(user=request.user)})
@@ -227,7 +232,7 @@ def product_detail(request, product_id):
         return redirect('product_detail', product_id=product.id)
     return render(request, "product_detail.html", {"product": product, "reviews": reviews, "related_products": related_products, "favorites_ids": favorites_ids})
 
-# ================= CREATE ORDER =================
+# CREATE ORDER 
 def create_order(request):
     if not request.user.is_authenticated: return redirect("login")
     if request.method == "POST":
@@ -345,7 +350,8 @@ def add_review(request, product_id):
         return JsonResponse({"ok": True})
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)})
-    # REST API 
+
+# REST API 
 def api_products_list(request):
     """ REST API Endpoint: Возвращает список всех товаров в формате JSON """
     products = Product.objects.all()
@@ -360,3 +366,72 @@ def api_products_list(request):
             "stock": p.stock
         })
     return JsonResponse({"status": "success", "count": len(data), "data": data})
+
+# КАСТОМНЫЕ СБОРКИ
+def custom_build(request):
+    if request.method == "POST":
+        return render(request, "custom_build_success.html")
+    return render(request, "custom_build.html")
+#  ИНФОРМАЦИОННЫЕ СТРАНИЦЫ 
+def info_page(request, slug):
+    pages = {
+        'contacts': {
+            'title': 'Контакты', 
+            'icon': 'bi-telephone-fill',
+            'content': '''
+                <div class="row g-4 mt-2">
+                    <div class="col-md-6">
+                        <h4 class="fw-bold mb-3"><i class="bi bi-geo-alt-fill text-primary me-2"></i> Главный офис</h4>
+                        <p class="fs-5"><strong>Телефон:</strong> +7 968 X22 13 XX<br>
+                        <strong>Email:</strong> PCSTORE@mail.ru<br>
+                        <strong>Адрес:</strong> г. Санкт-Петербург, Исаакиевская пл., 4, лит. А, 190000</p>
+                        <p class="fs-5"><strong>График работы:</strong><br>Пн-Пт 11:00—19:00<br>Сб-Вс 12:00-18:00</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="fw-bold mb-3"><i class="bi bi-headset text-success me-2"></i> Поддержка клиентов</h4>
+                        <p class="fs-5 text-secondary">По вопросам сборок, возврату и статусу заказов:</p>
+                        <p class="fs-5"><strong>Телефон:</strong> +7 (812) 555-01-99<br>
+                        <strong>Email:</strong> support@pcstore.ru</p>
+                        
+                        <h4 class="fw-bold mb-3 mt-5"><i class="bi bi-briefcase-fill text-warning me-2"></i> Сотрудничество (B2B)</h4>
+                        <p class="fs-5 text-secondary">Для коммерческих предложений и рекламы:</p>
+                        <p class="fs-5"><strong>Телефон:</strong> +7 (495) 777-88-22<br>
+                        <strong>Email:</strong> b2b@pcstore.ru</p>
+                    </div>
+                </div>
+            '''
+        },
+        'delivery': {
+            'title': 'Оплата и доставка', 
+            'icon': 'bi-truck',
+            'content': '<b>Доставка:</b><br>Мы доставляем заказы курьером до двери (500 ₽) или предлагаем бесплатный самовывоз из нашего магазина.<br><br><b>Оплата:</b><br>Принимаем банковские карты, наличные, а также списание баллов PC Coins до 100% от стоимости.'
+        },
+        'warranty': {
+            'title': 'Гарантия', 
+            'icon': 'bi-shield-check',
+            'content': 'Мы уверены в качестве наших сборок. На все ПК действует расширенная гарантия от магазина — до 5 лет.<br><br>В случае неисправности наш курьер бесплатно заберет ПК, а инженеры починят его за 24 часа.'
+        },
+        'reviews': {
+            'title': 'Отзывы клиентов', 
+            'icon': 'bi-star-fill',
+            'content': 'Более 2000 геймеров уже выбрали PC STORE. Раздел с живыми отзывами и фото сборок от покупателей находится в стадии заполнения.'
+        },
+        'promos': {
+            'title': 'Акции и бонусы', 
+            'icon': 'bi-gift-fill',
+            'content': '🎉 <b>Акция месяца:</b> Введите промокод <b>PCSTORE</b> при оформлении заказа и получите скидку 10%!<br><br>За каждую покупку мы начисляем 5% кэшбека в виде PC Coins на ваш аккаунт.'
+        },
+        'privacy': {
+            'title': 'Политика конфиденциальности', 
+            'icon': 'bi-file-earmark-lock-fill',
+            'content': 'Ваши данные под надежной защитой. Мы используем современные протоколы шифрования и никогда не передаем личную информацию третьим лицам.'
+        },
+    }
+    
+    page = pages.get(slug, {
+        'title': 'Страница в разработке', 
+        'icon': 'bi-tools',
+        'content': 'Наши разработчики уже работают над этой страницей. Возвращайтесь чуть позже!'
+    })
+    
+    return render(request, 'info_page.html', {'page': page})

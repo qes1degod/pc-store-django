@@ -23,7 +23,7 @@ class Brand(models.Model):
 
     def __str__(self): return self.name
 
-# 🔥 НОВОЕ: Модель Тегов для связи ManyToMany (Требование проекта)
+# Модель Тегов для связи ManyToMany
 class Tag(models.Model):
     """ Модель тегов для товаров """
     name = models.CharField(max_length=50, verbose_name="Имя тега")
