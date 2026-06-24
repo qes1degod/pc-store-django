@@ -8,7 +8,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# 🔥 APPS
+#  APPS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -18,14 +18,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
 
-    # 💎 realtime
+    #  realtime
     'channels',
 
-    # твоё приложение
+    #  приложение
     'shop',
 ]
 
-# 🔥 MIDDLEWARE
+#  MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,7 +53,7 @@ TEMPLATES = [
     },
 ]
 
-# 💎 REALTIME (ASGI)
+#  REALTIME (ASGI)
 ASGI_APPLICATION = "config.asgi.application"
 
 CHANNEL_LAYERS = {
@@ -81,7 +81,7 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# 🔥 НАСТРОЙКИ СТАТИКИ (КАРТИНКИ, CSS) 🔥
+#  НАСТРОЙКИ СТАТИКИ (КАРТИНКИ, CSS) 
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
